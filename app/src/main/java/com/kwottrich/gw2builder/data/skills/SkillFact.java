@@ -5,26 +5,48 @@ import com.kwottrich.gw2builder.data.enums.ComboFinisherType;
 import com.kwottrich.gw2builder.data.enums.EffectType;
 import com.kwottrich.gw2builder.data.enums.ComboFieldType;
 import com.kwottrich.gw2builder.data.enums.SkillFactType;
+import com.kwottrich.gw2builder.data.enums.converters.AttributeTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.ComboFieldTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.ComboFinisherTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.EffectTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.SkillFactTypeConverter;
+
+import org.greenrobot.greendao.annotation.Convert;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.ToOne;
 
 /**
  * Created by kenny on 8/31/2016.
  */
+@Entity
 public class SkillFact {
+    @Id
+    private Long id;
+    private Long skillId;
+    private Long traitedSkillId;
     private String text;
     private String icon;
+    @Convert(converter = SkillFactTypeConverter.class, columnType = String.class)
     private SkillFactType type;
     private String value;
+    @Convert(converter = AttributeTypeConverter.class, columnType = String.class)
     private AttributeType target;
+    @Convert(converter = EffectTypeConverter.class, columnType = String.class)
     private EffectType status;
     private String description;
     private Integer apply_count;
     private Integer duration; //TODO: determine if this needs to be decimal
+    @Convert(converter = ComboFieldTypeConverter.class, columnType = String.class)
     private ComboFieldType field_type;
+    @Convert(converter = ComboFinisherTypeConverter.class, columnType = String.class)
     private ComboFinisherType finisher_type;
     private Integer hit_count;
     private Integer distance;
     private Integer percent;
+    @ToOne(joinProperty = "prefix_parent")
     private SkillFact prefix;
+    private Long prefix_parent;
 
     //Specifies which trait has to be selected in order for this fact to take effect
     private Integer requires_trait;
@@ -32,6 +54,14 @@ public class SkillFact {
     //Specifies the array index of the SkillFact object it will override, if the trait specified in requires_trait is selected.
     // If this field is omitted, then the SkillFact contained within this object is to be appended to the existing SkillFacts array.
     private Integer overrides;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getText() {
         return text;
@@ -151,6 +181,15 @@ public class SkillFact {
 
     public void setPrefix(SkillFact prefix) {
         this.prefix = prefix;
+        this.prefix.setPrefix_parent(this.id);
+    }
+
+    public Long getPrefix_parent() {
+        return prefix_parent;
+    }
+
+    public void setPrefix_parent(Long prefix_parent) {
+        this.prefix_parent = prefix_parent;
     }
 
     public Integer getRequires_trait() {
@@ -167,5 +206,21 @@ public class SkillFact {
 
     public void setOverrides(Integer overrides) {
         this.overrides = overrides;
+    }
+
+    public Long getSkillId() {
+        return skillId;
+    }
+
+    public void setSkillId(Long skillId) {
+        this.skillId = skillId;
+    }
+
+    public Long getTraitedSkillId() {
+        return traitedSkillId;
+    }
+
+    public void setTraitedSkillId(Long traitedSkillId) {
+        this.traitedSkillId = traitedSkillId;
     }
 }

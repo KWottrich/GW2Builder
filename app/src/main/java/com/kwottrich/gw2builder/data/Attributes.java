@@ -1,8 +1,11 @@
 package com.kwottrich.gw2builder.data;
 
+import org.greenrobot.greendao.annotation.Entity;
+
 /**
  * Created by kenny on 8/30/2016.
  */
+@Entity
 public class Attributes {
     private int power = 1000;
     private int toughness = 1000;

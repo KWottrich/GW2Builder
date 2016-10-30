@@ -6,212 +6,96 @@ import com.kwottrich.gw2builder.data.enums.SkillCategory;
 import com.kwottrich.gw2builder.data.enums.SkillSlot;
 import com.kwottrich.gw2builder.data.enums.SkillType;
 import com.kwottrich.gw2builder.data.enums.WeaponType;
+import com.kwottrich.gw2builder.data.enums.converters.AttunementTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.SkillSlotConverter;
+import com.kwottrich.gw2builder.data.enums.converters.SkillTypeConverter;
+import com.kwottrich.gw2builder.data.enums.converters.WeaponTypeConverter;
+import com.kwottrich.gw2builder.data.joiners.JoinSkillsWithProfessions;
+import com.kwottrich.gw2builder.data.joiners.JoinSkillsWithSkillCategories;
+
+import org.greenrobot.greendao.annotation.Convert;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.JoinEntity;
+import org.greenrobot.greendao.annotation.JoinProperty;
+import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
 
 /**
  * Created by kenny on 8/30/2016.
  */
+@Entity
 public class Skill {
-    private Integer id;
+    @Id
+    private Long id;
     private String name;
     private String description;
     private String icon;
     //private picture(?) icon
     private String chat_link;
+    @Convert(converter = SkillTypeConverter.class, columnType = String.class)
     private SkillType type;
+    @Convert(converter = WeaponTypeConverter.class, columnType = String.class)
     private WeaponType weapon_type;
+    @ToMany
+    @JoinEntity(
+            entity = JoinSkillsWithProfessions.class,
+            sourceProperty = "skillId",
+            targetProperty = "professionId"
+    )
     private List<ProfessionType> professions;
+    @Convert(converter = SkillSlotConverter.class, columnType = String.class)
     private SkillSlot slot;
+    @ToMany(referencedJoinProperty = "skillId")
     private List<SkillFact> facts;
+    @ToMany(referencedJoinProperty = "traitedSkillId")
     private List<SkillFact> traited_facts;
+    @ToMany
+    @JoinEntity(
+            entity = JoinSkillsWithSkillCategories.class,
+            sourceProperty = "skillId",
+            targetProperty = "skillCategoryId"
+    )
     private List<SkillCategory> categories;
+    @Convert(converter = WeaponTypeConverter.class, columnType = String.class)
     private WeaponType offhand; //(name of offhand weapon this skill requires to be equipped. Usually only present for Thief)
     //(also dual_wield?)
+    @Convert(converter = AttunementTypeConverter.class, columnType = String.class)
     private AttunementType attunement; //ele only
-    private Integer cost; //("number" instead of Integer?)
+    private Long cost; //("number" instead of Integer?)
     //private WeaponType dual_wield;
-    private Integer flip_skill;
-    private Integer initiative;
-    private Integer next_chain; // ID of next skill
-    private Integer prev_chain; // ID of previous skill
-    private List<Integer> transform_skills; // IDs of skills
-    private List<Integer> bundle_skills; // IDs of skills
-    private Integer toolbelt_skill; // Corresponding toolbelt skill ID
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getChat_link() {
-        return chat_link;
-    }
-
-    public void setChat_link(String chat_link) {
-        this.chat_link = chat_link;
-    }
-
-    public SkillType getType() {
-        return type;
-    }
-
-    public void setType(SkillType type) {
-        this.type = type;
-    }
-
-    public WeaponType getWeapon_type() {
-        return weapon_type;
-    }
-
-    public void setWeapon_type(WeaponType weapon_type) {
-        this.weapon_type = weapon_type;
-    }
-
-    public List<ProfessionType> getProfessions() {
-        return professions;
-    }
-
-    public void setProfessions(List<ProfessionType> professions) {
-        this.professions = professions;
-    }
-
-    public SkillSlot getSlot() {
-        return slot;
-    }
-
-    public void setSlot(SkillSlot slot) {
-        this.slot = slot;
-    }
-
-    public List<SkillFact> getFacts() {
-        return facts;
-    }
-
-    public void setFacts(List<SkillFact> facts) {
-        this.facts = facts;
-    }
-
-    public List<SkillFact> getTraited_facts() {
-        return traited_facts;
-    }
-
-    public void setTraited_facts(List<SkillFact> traited_facts) {
-        this.traited_facts = traited_facts;
-    }
-
-    public List<SkillCategory> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<SkillCategory> categories) {
-        this.categories = categories;
-    }
-
-    public WeaponType getOffhand() {
-        return offhand;
-    }
-
-    public void setOffhand(WeaponType offhand) {
-        this.offhand = offhand;
-    }
-
-    public AttunementType getAttunement() {
-        return attunement;
-    }
-
-    public void setAttunement(AttunementType attunement) {
-        this.attunement = attunement;
-    }
-
-    public Integer getCost() {
-        return cost;
-    }
-
-    public void setCost(Integer cost) {
-        this.cost = cost;
-    }
-
-    public Integer getFlip_skill() {
-        return flip_skill;
-    }
-
-    public void setFlip_skill(Integer flip_skill) {
-        this.flip_skill = flip_skill;
-    }
-
-    public Integer getInitiative() {
-        return initiative;
-    }
-
-    public void setInitiative(Integer initiative) {
-        this.initiative = initiative;
-    }
-
-    public Integer getNext_chain() {
-        return next_chain;
-    }
-
-    public void setNext_chain(Integer next_chain) {
-        this.next_chain = next_chain;
-    }
-
-    public Integer getPrev_chain() {
-        return prev_chain;
-    }
-
-    public void setPrev_chain(Integer prev_chain) {
-        this.prev_chain = prev_chain;
-    }
-
-    public List<Integer> getTransform_skills() {
-        return transform_skills;
-    }
-
-    public void setTransform_skills(List<Integer> transform_skills) {
-        this.transform_skills = transform_skills;
-    }
-
-    public List<Integer> getBundle_skills() {
-        return bundle_skills;
-    }
-
-    public void setBundle_skills(List<Integer> bundle_skills) {
-        this.bundle_skills = bundle_skills;
-    }
-
-    public Integer getToolbelt_skill() {
-        return toolbelt_skill;
-    }
-
-    public void setToolbelt_skill(Integer toolbelt_skill) {
-        this.toolbelt_skill = toolbelt_skill;
-    }
+    @Transient
+    private Long flip_skill;
+    @ToOne(joinProperty = "flip_parent_skill")
+    private Skill flip_skill_skill;
+    private Long flip_parent_skill;
+    private Long initiative;
+    @Transient
+    private Long next_chain; // ID of next skill
+    @ToOne(joinProperty = "next_chain_parent_skill")
+    private Skill next_chain_skill;
+    private Long next_chain_parent_skill;
+    @Transient
+    private Long prev_chain; // ID of previous skill
+    @ToOne(joinProperty = "prev_chain_parent_skill")
+    private Skill prev_chain_skill;
+    private Long prev_chain_parent_skill;
+    @Transient
+    private List<Long> transform_skills; // IDs of skills
+    private Long transform_parent_skill;
+    @ToMany(referencedJoinProperty = "transform_parent_skill")
+    private List<Skill> transform_skills_skills;
+    @Transient
+    private List<Long> bundle_skills; // IDs of skills
+    private Long bundle_parent_skill;
+    @ToMany(referencedJoinProperty = "bundle_parent_skill")
+    private List<Skill> bundle_skills_skills;
+    @Transient
+    private Long toolbelt_skill; // Corresponding toolbelt skill ID
+    private Long toolbelt_parent_skill;
+    @ToOne(joinProperty = "toolbelt_parent_skill")
+    private Skill toolbelt_skill_skill;
 }

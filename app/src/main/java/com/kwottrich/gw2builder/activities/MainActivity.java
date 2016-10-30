@@ -1,26 +1,25 @@
 package com.kwottrich.gw2builder.activities;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.kwottrich.gw2builder.R;
+import com.kwottrich.gw2builder.actions.JSONReader;
+import com.kwottrich.gw2builder.data.skills.Skill;
+import com.kwottrich.gw2builder.util.ThreadHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String IMAGE_URL_A = "https://render.guildwars2.com/file/93910A51076B0B43AC4CCF741EF57678CBB2FD51/103479.png";
@@ -34,21 +33,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         imageMap = new HashMap<>();
         currentImage = IMAGE_URL_A;
-        applyWebPicture(currentImage, R.id.imageButton);
+
+        SQLiteDatabase mydatabase = openOrCreateDatabase("gw2b_db",MODE_PRIVATE,null);
+
+        JSONReader j = new JSONReader();
+        try {
+            ThreadHelper.runOnThread(j);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void applyWebPicture(final String url, final int viewId) {
@@ -65,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
                         InputStream imgStream = (InputStream) new URL(url).getContent();
                         skillImg = BitmapFactory.decodeStream(imgStream);
                         imageMap.put(url, skillImg);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -104,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
-        applyWebPicture(currentImage, R.id.imageButton);
     }
 
     @Override

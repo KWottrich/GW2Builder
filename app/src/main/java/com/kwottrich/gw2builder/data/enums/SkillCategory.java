@@ -1,8 +1,12 @@
 package com.kwottrich.gw2builder.data.enums;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+
 /**
  * Created by kenny on 8/31/2016.
  */
+@Entity
 public enum SkillCategory {
     Arcane,
     Attunement,
@@ -57,5 +61,16 @@ public enum SkillCategory {
     Virtue,
     Ward,
     WeaponKit,
-    Well
+    Well;
+
+    @Id
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
